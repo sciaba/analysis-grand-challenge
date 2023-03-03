@@ -91,11 +91,14 @@ logging.getLogger("cabinetry").setLevel(logging.INFO)
 # %%
 ### GLOBAL CONFIGURATION
 
+# input datasets list in json format
+DATASETS = "ntuples_merged.json"
+
 # input files per process, set to e.g. 10 (smaller number = faster)
 N_FILES_MAX_PER_SAMPLE = 5
 
 # enable Dask
-USE_DASK = True
+USE_DASK = False
 
 # enable ServiceX
 USE_SERVICEX = False
@@ -118,7 +121,7 @@ SYSTEMATICS = "all"  # currently has no effect
 CORES_PER_WORKER = 2  # does not do anything, only used for metric gathering (set to 2 for distributed coffea-casa)
 
 # scaling for local setups with FuturesExecutor
-NUM_CORES = 4
+NUM_CORES = 128
 
 # only I/O, all other processing disabled
 DISABLE_PROCESSING = False
@@ -377,7 +380,7 @@ class AGCSchema(BaseSchema):
 # Here, we gather all the required information about the files we want to process: paths to the files and asociated metadata.
 
 # %% tags=[]
-fileset = utils.construct_fileset(N_FILES_MAX_PER_SAMPLE, use_xcache=False, af_name=AF_NAME)  # local files on /data for ssl-dev
+fileset = utils.construct_fileset(N_FILES_MAX_PER_SAMPLE, use_xcache=False, af_name=AF_NAME, datasets=DATASETS)  # local files on /data for ssl-dev
 
 print(f"processes in fileset: {list(fileset.keys())}")
 print(f"\nexample of information in fileset:\n{{\n  'files': [{fileset['ttbar__nominal']['files'][0]}, ...],")

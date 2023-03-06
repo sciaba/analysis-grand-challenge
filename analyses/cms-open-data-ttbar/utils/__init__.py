@@ -1,3 +1,5 @@
+import re
+
 import asyncio
 import json
 
@@ -80,6 +82,27 @@ def construct_fileset(n_files_max_per_sample, use_xcache=False, af_name="",
             if af_name == "ssl-dev":
                 # point to local files on /data
                 file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/", "/data/alheld/") for f in file_paths]
+            # fragile code as it depends on the dataset
+            if af_name == "cern-http":
+                # point to files on EOS using HTTP
+                if (re.search("merged", datasets)):
+                    file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "https://eoscms.cern.ch//eos/cms/store/test/agc") for f in file_paths]
+                else:
+                    file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "https://eoscms.cern.ch//eos/cms/opstest/asciaba/agc") for f in file_paths]
+                    file_paths = [f + "?authz=" + token for f in file_paths]
+            # fragile code as it depends on the dataset
+            if af_name == "cern-xrootd":
+                # point to files on EOS using xrootd
+                if (re.search("merged", datasets)):
+                    file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "root://eoscms.cern.ch//eos/cms/store/test/agc") for f in file_paths]
+                else:
+                    file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "root://eoscms.cern.ch//eos/cms/opstest/asciaba/agc") for f in file_paths]
+            if af_name == "cernbox-xrootd":
+                # point to files on EOS using xrootd
+                file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "root://eosuser.cern.ch//eos/user/a/asciaba/datasets/agc") for f in file_paths]
+            if af_name == "cern-local":
+                # point to local files on /scratch
+                file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "/data/datasets/agc") for f in file_paths]
             nevts_total = sum([f["nevts"] for f in file_list])
             metadata = {"process": process, "variation": variation, "nevts": nevts_total, "xsec": xsec_info[process]}
             fileset.update({f"{process}__{variation}": {"files": file_paths, "metadata": metadata}})

@@ -77,12 +77,12 @@ def construct_fileset(n_files_max_per_sample, use_xcache=False, af_name="",
                 file_list = file_list[:n_files_max_per_sample]  # use partial set of samples
 
             file_paths = [f["path"] for f in file_list]
-            if use_xcache:
-                file_paths = [f.replace("https://xrootd-local.unl.edu:1094", "root://red-xcache1.unl.edu") for f in file_paths]
             if af_name == "ssl-dev":
                 # point to local files on /data
                 file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/", "/data/alheld/") for f in file_paths]
             # fragile code as it depends on the dataset
+            if af_name == "unl-xrootd":
+                file_paths = [f.replace("https://xrootd-local.unl.edu:1094", "root://xrootd-local.unl.edu:1094") for f in file_paths]
             if af_name == "cern-http":
                 # point to files on EOS using HTTP
                 if (re.search("merged", datasets)):
@@ -103,6 +103,8 @@ def construct_fileset(n_files_max_per_sample, use_xcache=False, af_name="",
             if af_name == "cern-local":
                 # point to local files on /scratch
                 file_paths = [f.replace("https://xrootd-local.unl.edu:1094//store/user/AGC", "/data/datasets/agc") for f in file_paths]
+            if use_xcache:
+                file_paths = [f.replace("root:", "root://xcache01.cern.ch//xroot:") for f in file_paths]
             nevts_total = sum([f["nevts"] for f in file_list])
             metadata = {"process": process, "variation": variation, "nevts": nevts_total, "xsec": xsec_info[process]}
             fileset.update({f"{process}__{variation}": {"files": file_paths, "metadata": metadata}})

@@ -6,7 +6,7 @@ workers=4
 fraction=50
 
 usage() {
-    echo "Usage : run_ttbar.sh [-n NFILES] -a AFNAME -w NWORKERS [-d] [-m] -h]"
+    echo "Usage : run_ttbar.sh [-n NFILES] -a AFNAME -w NWORKERS [-d] [-m] [-h] [-x]"
     echo "                     [-f FRACTION]"
     echo
     echo "        -n NFILES: specify the maximum number of files per dataset"
@@ -19,13 +19,14 @@ usage() {
     echo "        -w NWORKERS: specify how many workers should be used"
     echo "        -d: use if the data processing should be skipped"
     echo "        -m: use of the merged dataset should be used instead of the original"
+    echo "        -x: read through the CERN X-Cache instance"
     echo "        -f FRACTION: use to specify the percentage of data to read"
     echo "                     ((4, 15, 25, 50) default is 50)"
     echo "        -h: this help message"
 }
 
 
-while getopts "n:a:w:df:mh" arg; do
+while getopts "n:a:w:df:mxh" arg; do
     case $arg in
 	n)
 	    nfiles=$OPTARG
@@ -38,6 +39,9 @@ while getopts "n:a:w:df:mh" arg; do
 	    ;;
 	d)
 	    disable_proc=1
+	    ;;
+	x)
+	    xcache=1
 	    ;;
 	f)
 	    fraction=$OPTARG
@@ -68,6 +72,14 @@ else
     WDIR="ttbar_merged_run_"
     datasets="ntuples_merged.json"
 fi
+
+if [ -z "${xcache}" ] ; then
+   xcache='False'
+else
+    WDIR="${WDIR}xcache_"
+    xcache='True'
+fi
+
 if [ -z "${disable_proc}" ] ; then
     noproc='False'
     WDIR="${WDIR}${nfiles}_${afname}_${workers}"
@@ -76,11 +88,11 @@ else
     WDIR="${WDIR}${nfiles}_${afname}_noproc_${fraction}_${workers}"
 fi
 if [ -d ${WDIR} ] ; then
-    echo "Directory already exit. Exiting..."
+    echo "Directory ${WDIR} already exists. Exiting..."
     exit 1
 fi
 mkdir ${WDIR}
-cat ttbar_template.py | sed "s/_NFILES_/${nf}/" | sed "s/_AFNAME_/${afname}/" | sed "s/_WORKERS_/${workers}/" | sed "s/_NOPROC_/${noproc}/" | sed "s/_FRACTION_/${fraction}/" | sed "s/_DATASETS_/${datasets}/" > ${WDIR}/ttbar_tmp.py
+cat ttbar_template.py | sed "s/_NFILES_/${nf}/" | sed "s/_AFNAME_/${afname}/" | sed "s/_WORKERS_/${workers}/" | sed "s/_NOPROC_/${noproc}/" | sed "s/_FRACTION_/${fraction}/" | sed "s/_DATASETS_/${datasets}/" | sed "s/_XCACHE_/${xcache}/" > ${WDIR}/ttbar_tmp.py
 cd ${WDIR}
 ln -s ../utils utils
 ln -s ../ntuples.json .

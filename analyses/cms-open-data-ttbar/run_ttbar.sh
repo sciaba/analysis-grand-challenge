@@ -1,6 +1,7 @@
 #! /bin/bash
 
 # Default values
+maxjobs=3
 afname="unl"
 workers=4
 fraction=50
@@ -87,11 +88,26 @@ else
     noproc='True'
     WDIR="${WDIR}${nfiles}_${afname}_noproc_${fraction}_${workers}"
 fi
-if [ -d ${WDIR} ] ; then
-    echo "Directory ${WDIR} already exists. Exiting..."
+if [[ -d "${WDIR}.${maxjobs}" ]] ; then
+    echo "Enough jobs already. Exiting..."
     exit 1
 fi
+pre=$(ls -1d ${WDIR}.* 2> /dev/null | tail -1)
+if [ -n "$pre" ] ; then
+    pre=${pre: -1}
+else
+    pre=0
+fi
+new=$((pre + 1))
+if [ -d $WDIR ] ; then
+    echo "Moving $WDIR to $WDIR.$new"
+    mv $WDIR $WDIR.$new
+fi
 mkdir ${WDIR}
+if [ $? != 0 ] ; then
+    echo "Could not create test dir. Exiting..."
+    exit 1
+fi
 cat ttbar_template.py | sed "s/_NFILES_/${nf}/" | sed "s/_AFNAME_/${afname}/" | sed "s/_WORKERS_/${workers}/" | sed "s/_NOPROC_/${noproc}/" | sed "s/_FRACTION_/${fraction}/" | sed "s/_DATASETS_/${datasets}/" | sed "s/_XCACHE_/${xcache}/" > ${WDIR}/ttbar_tmp.py
 cd ${WDIR}
 ln -s ../utils utils

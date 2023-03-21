@@ -32,3 +32,6 @@ analyses/cms-open-data-ttbar/metrics
 
 # dask
 dask-worker-space/
+
+*~
+ttbar_*_run_*

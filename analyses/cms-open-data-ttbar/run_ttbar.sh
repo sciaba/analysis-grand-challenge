@@ -114,4 +114,5 @@ ln -s ../utils utils
 ln -s ../ntuples.json .
 ln -s ../ntuples_merged.json .
 ln -s ../cabinetry_config.yml .
+env > env.out
 prmon -i 5 -- ipython ttbar_tmp.py &> ttbar.out

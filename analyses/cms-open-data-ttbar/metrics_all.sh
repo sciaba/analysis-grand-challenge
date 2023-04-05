@@ -50,28 +50,28 @@ if [ "${njobs}" -lt 2 ] ; then
 fi
 echo "Processed" ${njobs} "outputs"
 echo -n "Read data by app:       "
-echo ${data[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.2f +- %.2f GiB\n", avg*1000^2/1024^3, err*1000^2/1024^3}'
+echo ${data[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.2f +- %.2f GiB\n", avg*1000^2/1024^3, err*1000^2/1024^3}'
 if [ -n "$locstor" ] ; then
     echo -n "Read data from storage: "
-    echo ${read_mbytes[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.2f +- %.2f GiB\n", avg/1024, err/1024}'
+    echo ${read_mbytes[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.2f +- %.2f GiB\n", avg/1024, err/1024}'
 else
     echo -n "Read data from network: "
-    echo ${rx_mbytes[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.2f +- %.2f GiB\n", avg/1024, err/1024}'
+    echo ${rx_mbytes[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.2f +- %.2f GiB\n", avg/1024, err/1024}'
 fi
 echo -n "Wallclock time:         "
-echo ${wtime[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.1f +- %.1f sec\n", avg, err}'
+echo ${wtime[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.3f +- %.3f sec\n", avg, err}'
 echo -n "CPU eff:                "
-echo ${eff[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.1f +- %.1f %\n", avg, err}'
+echo ${eff[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.2f +- %.2f %\n", avg, err}'
 echo -n "Execution time:         "
-echo ${exe[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.1f +- %.1f sec\n", avg, err}'
+echo ${exe[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.1f +- %.1f sec\n", avg, err}'
 echo -n "Throughput:             "
-echo ${thr[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.1f +- %.1f kHz\n", avg, err}'
+echo ${thr[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.1f +- %.1f kHz\n", avg, err}'
 echo -n "Data rate:              "
-echo ${data_rate[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.0f +- %.0f MiB/s\n", avg*1000^2/1024^2, err*1000^2/1024^2}'
+echo ${data_rate[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.0f +- %.0f MiB/s\n", avg*1000^2/1024^2, err*1000^2/1024^2}'
 if [ -n "$locstor" ] ; then
     echo -n "Read rate from storage: "
-    echo ${read_rate[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.0f +- %.0f MiB/s\n", avg, err}'
+    echo ${read_rate[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.2f +- %.2f MiB/s\n", avg, err}'
 else
     echo -n "Read rate from network: "
-    echo ${rx_rate[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)/NF); printf "%.0f +- %.0f MiB/s\n", avg, err}'
+    echo ${rx_rate[@]} | awk '{for (i=1;i<=NF;i++)sum+=$i; avg=(sum/NF); for (i=1;i<=NF;i++)sum2+=($i-avg)^2;err=sqrt(sum2/(NF-1)); printf "%.2f +- %.2f MiB/s\n", avg, err}'
 fi

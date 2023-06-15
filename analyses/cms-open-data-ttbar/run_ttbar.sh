@@ -27,7 +27,7 @@ usage() {
 }
 
 
-while getopts "n:a:w:df:mxh" arg; do
+while getopts "n:a:w:df:mx:h" arg; do
     case $arg in
 	n)
 	    nfiles=$OPTARG
@@ -42,7 +42,7 @@ while getopts "n:a:w:df:mxh" arg; do
 	    disable_proc=1
 	    ;;
 	x)
-	    xcache=1
+	    xcache=$OPTARG
 	    ;;
 	f)
 	    fraction=$OPTARG
@@ -76,9 +76,13 @@ fi
 
 if [ -z "${xcache}" ] ; then
    xcache='False'
-else
+elif [ "${xcache}" == "hdd" ] ; then
     WDIR="${WDIR}xcache_"
-    xcache='True'
+elif [ "${xcache}" == "ssd" ] ; then
+    WDIR="${WDIR}xcachessd_"
+else
+    echo "Invalid cache option!"
+    exit 1
 fi
 
 if [ -z "${disable_proc}" ] ; then
